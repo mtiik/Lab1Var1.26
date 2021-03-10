@@ -1,20 +1,19 @@
 #include <iostream>
-#include <vector>
 
 using namespace std;
 
-void inputArr(vector <double>* arr) {
-	for (int i = 0; i < arr->size(); ++i) {
-		cin >> arr->at(i);
+void inputArr(double* arr, int size) {
+	for (int i = 0; i < size; ++i) {
+		std::cin >> arr[i];
 	}
 }
 
-double calculateArithmMean(vector <double>* arr, double z) {
+double calculateArithmMean(double* arr, double z, int size) {
 	double buffer = 0;
 	int counter = 0;
-	for (int i = 0; i < arr->size(); ++i) {
-		if (arr->at(i) <= z) {
-			buffer += arr->at(i);
+	for (int i = 0; i < size; ++i) {
+		if (arr[i] <= z) {
+			buffer += arr[i];
 			++counter;
 		}
 	}
@@ -28,50 +27,58 @@ bool testingForPositivity(double mean) {
 	else return false;
 }
 
-void createNewArr(vector <double>* arr, vector <double>* newArr) {
-	for (int i = 0; i < arr->size(); ++i) {
-		if (arr->at(i) < 0) {
-			newArr->push_back(arr->at(i));
+int searchMinusElm(double* arr, int size){
+	int counter = 0;
+	for(int i = 0; i < size; ++i) {
+		if(arr[i] < 0) {
+			++counter;
 		}
 	}
-	reverse(newArr->begin(), newArr->end());
+	return counter;
 }
 
-void outputArr(vector <double>* arr) {
-	if (arr->size() == 0) {
-		cout << "no negative elements";
-	}
-	else {
-		for (int i = 0; i < arr->size(); ++i) {
-			cout << arr->at(i) << " ";
+void createNewArr(double* arr, double* newArr, int size, int newSize) {
+	for (int i = 0; i < size; ++i) {
+		if (arr[i] < 0) {
+			newArr[newSize - 1] = arr[i];
+			--newSize;
 		}
+	}
+}
+
+void outputArr(double* arr, int size) {
+	for (int i = 0; i < size; ++i) {
+		cout << arr[i] << " ";
 	}
 	cout << '\n';
 }
 
 int main() {
 	double z, mean = 0;
-	int size;
+	int size, newSize = 0;
 	bool flag;
 	char key[1];
-	vector <double> arr;
-	vector <double> newArr;
+	double* arr = new double;
+	double* newArr = new double;
 	do {
 		cout << "enter arr size: ";
 		cin >> size;
 		cout << "enter 'z': ";
 		cin >> z;
 
-		arr.resize(size);
-		inputArr(&arr);
-		mean = calculateArithmMean(&arr, z);
+		*arr = size;
+		inputArr(arr, size);
+		mean = calculateArithmMean(arr, z, size);
 		flag = testingForPositivity(mean);
 		if (flag) {
-			createNewArr(&arr, &newArr);
-			outputArr(&newArr);
+			newSize = searchMinusElm(arr, size);
+			*newArr = newSize;
+			createNewArr(arr, newArr, size, newSize);
+			outputArr(newArr, newSize);
+			outputArr(arr, size);
 		}
 		else {
-			outputArr(&arr);
+			outputArr(arr, size);
 		}
 		cout << "do u want to continue? [y/n] ";
 		cin >> key[0];
